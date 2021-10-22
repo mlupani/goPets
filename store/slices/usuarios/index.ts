@@ -1,11 +1,15 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { AppDispatch } from '../../index';
 
+interface user {
+	avatar: string
+}
+
 interface userState {
 	status: string,
 	token?: string | null,
 	errorMessage: string,
-	user: {} | null,
+	user: user | null,
 	register: boolean
 }
 
@@ -57,7 +61,7 @@ export const usuarioSlice = createSlice({
 
 export const { login, addError, logout, checking } = usuarioSlice.actions
 
-export const signIn = (user: userState, register: boolean) => (dispatch: AppDispatch) => {
+export const signIn = (user: any, register: boolean) => (dispatch: AppDispatch) => {
 	if(user)
 		dispatch(login({user, register}))
 	else

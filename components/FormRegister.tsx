@@ -4,10 +4,11 @@ import { updateUser } from '../firebase/client';
 import { useForm } from '../hooks/useForm';
 import { signIn } from '../store/slices/usuarios'
 import Button from './Button';
+import { RootState } from '../store/index';
 
 const FormRegister = () => {
 
-    const user = useSelector(({usuario}) => usuario.user)
+    const user = useSelector(({usuario}:RootState) => usuario.user)
     const dispatch = useDispatch()
     const { onChange, form } = useForm({
         contrasena: '',
@@ -35,7 +36,7 @@ const FormRegister = () => {
     return (
         <form className="w-full max-w-lg" onSubmit={handleSubmit}>
             <div className="flex flex-wrap -mx-3 mb-6 items-center justify-center">
-                <img className='w-20 h-20 rounded-full' alt={'avatar de usuario'} src={user.avatar}></img>
+                <img className='w-20 h-20 rounded-full' alt={'avatar de usuario'} src={user?.avatar}></img>
             </div>
             <div className="flex flex-wrap -mx-3 mb-6">
                 <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
