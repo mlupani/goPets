@@ -9,7 +9,7 @@ const Footer = () => {
 
     if(router.pathname !== '/')
         return (
-            <nav className='grid grid-cols-5 lg:hidden bg-red-200 fixed w-full left-0 bottom-0 pl-0 mb-0 h-16'>
+            <nav className='grid grid-cols-5 md:hidden bg-red-200 fixed w-full left-0 bottom-0 pl-0 mb-0 h-16'>
                 <FooterButton title={'Inicio'} icon={'dog'} page={'home'} selected={router?.pathname === '/home' ? true : false} />
                 <FooterButton title={'Adopta'} icon={'heart'} page={'adopta'} selected={router?.pathname === '/adopta' ? true : false} />
                 <FooterButton title={'Publica'} icon={'house'} page={'home'} selected={router?.pathname === '/publica' ? true : false} />

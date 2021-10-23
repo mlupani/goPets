@@ -11,11 +11,11 @@ interface headerButtonProps {
 
 const HeaderButton = ({title, icon, page, selected = false}: headerButtonProps) => {
     return (
-        <div className={`flex flex-col text-center ${selected && 'border-b-2'} cursor-pointer  border-white text-white text-sm justify-center items-center  `}>
+        <div title={title} className={`flex flex-col text-center ${selected && 'border-b-2 md:pb-1'} cursor-pointer  border-white text-white text-sm justify-center items-center  `}>
             <Link href={page} >
                 <div className='flex flex-col text-center items-center'>
                     <Icons iconName={icon} />
-                    {title}
+                    <div className='md:hidden lg:flex'>{title}</div>
                 </div>
             </Link>
         </div>
