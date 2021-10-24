@@ -1,12 +1,7 @@
-import { useDispatch } from 'react-redux';
-import useUser from 'hooks/useUser'
 import Card from 'components/Card';
 import data from 'data/data.json'
 
 const index = () => {
-
-    const user = useUser()
-    const dispatch = useDispatch()
 
     return (
         <div className='container mx-auto flex flex-col justify-center items-center relative'>

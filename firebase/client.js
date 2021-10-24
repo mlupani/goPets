@@ -2,6 +2,7 @@ import { collection, getDocs, query, where, addDoc, setDoc, doc } from 'firebase
 //import { doc, onSnapshot } from 'firebase/firestore'
 import { db } from './config'
 import { mapResults } from './helpers'
+let md5 = require('md5')
 
 export const getUsers = async () => {
 	try {
@@ -14,7 +15,7 @@ export const getUsers = async () => {
 	}
 }
 
-export const getUserInCollection = async (user, dispatch, callback) => {
+export const getUserInCollection = async (user) => {
 
 	if(!user) {
 		return null
@@ -48,5 +49,6 @@ export const addUser = async ({email, uid, displayName, photoURL}) => {
 
 export const updateUser = async (userUpdated) => {
 	const { userID, ...resto } = userUpdated
+	resto.password = md5(resto.password)
 	await setDoc(doc(db, 'users', userID), resto)
 }

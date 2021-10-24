@@ -48,7 +48,7 @@ export const getUserConnected = async (dispatch, callback) => {
 		let userFirebase = await getUserInCollection(user)
 		if(userFirebase){
 			dispatch(callback(userFirebase, false))
-		}else{
+		}else if(userFirebase == null){
 			userFirebase = await addUser(user)
 			dispatch(callback(userFirebase, true))
 		}

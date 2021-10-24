@@ -1,10 +1,7 @@
-import useUser from 'hooks/useUser';
 import {useRouter} from 'next/router'
 import FooterButton from './FooterButton';
 
 const Footer = () => {
-
-    const user = useUser()
     const router = useRouter()
 
     if(router.pathname !== '/')

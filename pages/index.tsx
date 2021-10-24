@@ -1,5 +1,6 @@
 import type { NextPage } from 'next'
-import useUser from 'hooks/useUser'
+import { useSelector } from 'react-redux';
+import { RootState } from 'store/index';
 import HeadPage from 'components/HeadPage';
 import Logo from 'components/Logo';
 import Spinner from 'components/Spinner';
@@ -8,9 +9,7 @@ import FormRegister from 'components/FormRegister';
 
 const Home: NextPage = () => {
 
-  const user = useUser()
-
-  //if(user.status === 'checking' && !user.register) return <Spinner />
+  const user = useSelector((state: RootState) => state.usuario)
 
   if(user.status === 'authenticated' && !user.register) return <></>
 
