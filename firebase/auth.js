@@ -1,8 +1,9 @@
 import { initializeApp } from 'firebase/app'
-import { getAuth, signInWithPopup, FacebookAuthProvider, GoogleAuthProvider, signOut, linkWithCredential } from 'firebase/auth'
+import { getAuth, signInWithPopup, FacebookAuthProvider, GoogleAuthProvider, signOut, linkWithCredential, signInWithEmailAndPassword  } from 'firebase/auth'
 import { firebaseConfig } from './config'
 import { getUserInCollection, addUser } from './client'
 import { setChecking } from 'store/slices/usuarios'
+let md5 = require('md5')
 initializeApp(firebaseConfig)
 
 const auth = getAuth()
@@ -34,6 +35,19 @@ export const signInGoogle = (e, pendingCred = null) => {
 		})
 		.catch((error) => {
 			console.log('error: ',error)
+		})
+}
+
+export const signInEmail = (email, password) => {
+	password = md5(password)
+	signInWithEmailAndPassword(auth, email, password)
+		.then((userCredential) => {
+			const user = userCredential.user
+			console.log(user)
+		})
+		.catch((error) => {
+			const errorMessage = error.message
+			console.log(errorMessage)
 		})
 }
 
