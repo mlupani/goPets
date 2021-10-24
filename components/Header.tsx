@@ -9,16 +9,16 @@ const Header = () => {
 
     if(router.pathname !== '/')
         return (
-            <div className='grid grid-cols-2 md:grid-cols-3 justify-center border-b-2 border-gray-200 pb-3 bg-gray-800 w-full z-50 fixed items-center'>
-                <div className='flex flex-row justify-center md:justify-end'>
+            <div className='grid grid-cols-2 grid-flow auto-cols-max md:grid-cols-3 justify-center border-b-2 border-gray-200 pb-3 bg-gray-800 w-full z-50 fixed items-center'>
+                <div className='flex justify-center lg:justify-end'>
                     <select>
                         <option>Localizacion</option>
                     </select>
                 </div>
-                <div className='flex justify-around lg:justify-center md:ml-10 text-2xl'>
+                <div className='flex justify-around lg:justify-start lg:justify-center text-2xl'>
                     <h1 className='text-white'>GoPets!</h1>
                 </div>
-                <div className='hidden md:flex gap-5 pt-1'>
+                <div className='hidden md:flex flex-grow gap-5 pt-1'>
                     <HeaderButton title={'Inicio'} icon={'dog'} page={'home'} selected={router?.pathname === '/home' ? true : false} />
                     <HeaderButton title={'Adopta'} icon={'heart'} page={'adopta'} selected={router?.pathname === '/adopta' ? true : false} />
                     <HeaderButton title={'Publica'} icon={'house'} page={'home'} selected={router?.pathname === '/publica' ? true : false} />

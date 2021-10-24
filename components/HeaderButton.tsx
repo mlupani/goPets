@@ -15,7 +15,7 @@ const HeaderButton = ({title, icon, page, selected = false}: headerButtonProps) 
             <Link href={page} >
                 <div className='flex flex-col text-center items-center'>
                     <Icons iconName={icon} />
-                    {title}
+                    <div className='md:hidden lg:flex'>{title}</div>
                 </div>
             </Link>
         </button>
