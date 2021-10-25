@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { signInFacebook } from '../firebase/auth';
 import { signInGoogle } from '../firebase/auth';
 import Button from 'components/Button';
-import FormLogin from './FormLogin';
+import FormLogin from 'components/FormLogin';
 
 const options = {
     0: 'buttons',
