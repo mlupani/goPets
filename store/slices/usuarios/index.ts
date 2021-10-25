@@ -2,7 +2,9 @@ import { createSlice } from '@reduxjs/toolkit'
 import { AppDispatch } from '../../index';
 
 interface user {
-	avatar: string
+	avatar: string,
+	email: string,
+	provider: string
 }
 
 interface userState {

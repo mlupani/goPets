@@ -5,6 +5,7 @@ import { useForm } from '../hooks/useForm';
 import { signIn } from '../store/slices/usuarios'
 import Button from './Button';
 import { RootState } from '../store/index';
+import { createUserEmailPass, LinkUserEmailPass } from '../firebase/auth';
 
 const FormRegister = () => {
 
@@ -28,8 +29,13 @@ const FormRegister = () => {
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault()
         if(error) return null
-        const userUpdated = {...user, password: form.contrasena, phoneNumber: form.telefono}
+        const userUpdated = {...user, phoneNumber: form.telefono}
         await updateUser(userUpdated)
+        if(user?.provider !== 'password')
+            await LinkUserEmailPass(user?.email, form.contrasena)
+        else
+            await createUserEmailPass(user?.email, form.contrasena)
+
         dispatch(signIn(userUpdated, false))
     }
 

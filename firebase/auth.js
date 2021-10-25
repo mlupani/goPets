@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app'
-import { getAuth, signInWithPopup, FacebookAuthProvider, GoogleAuthProvider, signOut, linkWithCredential, signInWithEmailAndPassword  } from 'firebase/auth'
+import { getAuth, signInWithPopup, FacebookAuthProvider, GoogleAuthProvider, signOut, linkWithCredential, signInWithEmailAndPassword, createUserWithEmailAndPassword, EmailAuthProvider,sendEmailVerification     } from 'firebase/auth'
 import { firebaseConfig } from './config'
 import { getUserInCollection, addUser } from './client'
 import { setChecking } from 'store/slices/usuarios'
@@ -28,7 +28,6 @@ export const signInGoogle = (e, pendingCred = null) => {
 	signInWithPopup(auth, provider)
 		.then((result) => {
 			const user = result.user
-			console.log(pendingCred)
 			if(pendingCred){
 				linkWithCredential(user, pendingCred)
 			}
@@ -40,6 +39,7 @@ export const signInGoogle = (e, pendingCred = null) => {
 
 export const signInEmail = (email, password) => {
 	password = md5(password)
+	console.log(password)
 	signInWithEmailAndPassword(auth, email, password)
 		.then((userCredential) => {
 			const user = userCredential.user
@@ -76,4 +76,37 @@ export const logOut = (dispatch, callback) => {
 	}).catch((error) => {
 		console.log('error Logout: ',error)
 	})
+}
+
+export const createUserEmailPass = async (email, password) => {
+	password = md5(password)
+	createUserWithEmailAndPassword(auth, email, password)
+		.then((userCredential) => {
+			//const user = userCredential.user
+			sendEmailVerificationToUser()
+		})
+		.catch((error) => {
+			console.log(error.message)
+		})
+}
+
+export const LinkUserEmailPass = async (email, password) => {
+	password = md5(password)
+	const credential = EmailAuthProvider.credential(email, password)
+	linkWithCredential(auth.currentUser, credential)
+		.then((usercred) => {
+			//const user = usercred.user
+			//console.log('Account linking success', user)
+			sendEmailVerificationToUser()
+		}).catch((error) => {
+			console.log('Account linking error', error)
+		})
+}
+
+export const sendEmailVerificationToUser = () => {
+	console.log(auth.currentUser)
+	sendEmailVerification(auth.currentUser)
+		.then(() => {
+			console.log('email de verificacion enviado')
+		})
 }
