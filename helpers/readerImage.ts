@@ -1,4 +1,4 @@
-export const setupReader = async file => {
+export const setupReader = async (file: any) => {
     return new Promise((resolve, reject) =>{
         var reader = new FileReader();
         reader.readAsDataURL(file);
