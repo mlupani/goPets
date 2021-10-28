@@ -1,4 +1,4 @@
-import { collection, getDocs, query, where, addDoc, setDoc, doc, Timestamp } from 'firebase/firestore'
+import { collection, getDocs, query, where, addDoc, setDoc, doc, Timestamp, orderBy } from 'firebase/firestore'
 //import { doc, onSnapshot } from 'firebase/firestore'
 import { db } from './config'
 import { mapResults } from './helpers'
@@ -76,7 +76,7 @@ export const addPost = async (usuarioID, avatar, usuarioName, title, description
 
 export const getPosts = async (callback) => {
 
-	const q = query(collection(db, 'posts'))
+	const q = query(collection(db, 'posts'), orderBy('createdAt', 'desc'))
 	const querySnapshot = await getDocs(q)
 	const { docs } = querySnapshot
 	const res = docs.map(val => mapResults(val))
