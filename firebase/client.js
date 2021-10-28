@@ -55,7 +55,7 @@ export const updateUser = async (userUpdated) => {
 	await setDoc(doc(db, 'users', userID), resto)
 }
 
-export const addPost = async (usuarioID, usuarioName, avatar, title, description, img) => {
+export const addPost = async (usuarioID, avatar, usuarioName, title, description, img) => {
 
 	const data = {
 		usuarioID,

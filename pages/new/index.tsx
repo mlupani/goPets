@@ -30,7 +30,7 @@ const index = () => {
         if(!upload || !form.title || !form.description) return null
         setLoading(true)
         const url = await putStorageItem(upload, 'posts')
-        await addPost(user?.id, user?.avatar, user?.displayName, form.title, form.description, url)
+        await addPost(user?.id, user?.avatar, user?.name, form.title, form.description, url)
         router.push('/home')
     }
 

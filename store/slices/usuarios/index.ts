@@ -5,7 +5,7 @@ interface user {
 	avatar: string,
 	email: string,
 	provider: string,
-	displayName: string,
+	name: string,
 	id: string
 }
 
