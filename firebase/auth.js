@@ -1,15 +1,26 @@
 import { initializeApp } from 'firebase/app'
-import { getAuth, signInWithPopup, FacebookAuthProvider, GoogleAuthProvider, signOut, linkWithCredential, signInWithEmailAndPassword, createUserWithEmailAndPassword, EmailAuthProvider,sendEmailVerification     } from 'firebase/auth'
+import { getAuth, signInWithPopup, FacebookAuthProvider, GoogleAuthProvider, signOut, linkWithCredential, signInWithEmailAndPassword, createUserWithEmailAndPassword, EmailAuthProvider,sendEmailVerification, sendSignInLinkToEmail, fetchSignInMethodsForEmail } from 'firebase/auth'
 import { firebaseConfig } from './config'
 import { getUserInCollection, addUser } from './client'
 import { setChecking } from 'store/slices/usuarios'
-let md5 = require('md5')
 initializeApp(firebaseConfig)
 
 const auth = getAuth()
 
-export const signInFacebook = () => {
+const errorsLogin = {
+	'error': 'Hubo un Error',
+	'auth/weak-password' : 'El password debe poseer al menos 6 caracteres',
+	'auth/email-already-in-use': 'El Mail ya esta registrado, elije otro',
+	'auth/invalid-email': 'Email o usuario inválido',
+	'auth/user-not-found': 'Email no registrado',
+	'auth/wrong-password': 'Email/Contraseña inválidos',
+	'auth/too-many-requests': 'Ha realizado muchos intentos recuerrentes, espere un momento y vuelva a intentarlo',
+	'There is no user record corresponding to this identifier. The user may have been deleted.': 'El email no pertenece a ningun usuario registrado.',
+	'auth/requires-recent-login': 'Esta acción requiere cerrar sesión y volver a logearse.',
+	'auth/invalid-verification-code': 'El codigo ingresado es incorrecto, ingrese el codigo que se le ha enviado al SMS'
+}
 
+export const signInFacebook = () => {
 	const provider = new FacebookAuthProvider()
 	signInWithPopup(auth, provider)
 		.then()
@@ -19,11 +30,9 @@ export const signInFacebook = () => {
 				signInGoogle(null, credential)
 			}
 		})
-
 }
 
 export const signInGoogle = (e, pendingCred = null) => {
-
 	const provider = new GoogleAuthProvider()
 	signInWithPopup(auth, provider)
 		.then((result) => {
@@ -38,16 +47,15 @@ export const signInGoogle = (e, pendingCred = null) => {
 }
 
 export const signInEmail = (email, password) => {
-	password = md5(password)
-	console.log(password)
-	signInWithEmailAndPassword(auth, email, password)
+	//password = md5(password)
+	return signInWithEmailAndPassword(auth, email, password)
 		.then((userCredential) => {
-			const user = userCredential.user
-			console.log(user)
+			//const user = userCredential.user
 		})
 		.catch((error) => {
-			const errorMessage = error.message
-			console.log(errorMessage)
+			console.log(error.code)
+			const errorMsg = errorsLogin[error.code] || errorsLogin['error']
+			return errorMsg
 		})
 }
 
@@ -55,16 +63,19 @@ export const getUserConnected = async (dispatch, callback) => {
 	return auth.onAuthStateChanged(async user=> {
 		if(!user) {
 			dispatch(callback(null))
-			return
+			return null
 		}
 
 		dispatch(setChecking())
 		let userFirebase = await getUserInCollection(user)
 		if(userFirebase){
 			dispatch(callback(userFirebase, false))
-		}else if(userFirebase == null){
+		}else{
 			userFirebase = await addUser(user)
-			dispatch(callback(userFirebase, true))
+			if(userFirebase?.provider === 'password')
+				dispatch(callback(userFirebase, false))
+			else
+				dispatch(callback(userFirebase, true))
 		}
 	})
 }
@@ -78,11 +89,11 @@ export const logOut = (dispatch, callback) => {
 	})
 }
 
-export const createUserEmailPass = async (email, password) => {
-	password = md5(password)
+export const createUserEmailPass = async (email, password, phoneNumber) => {
 	createUserWithEmailAndPassword(auth, email, password)
-		.then((userCredential) => {
-			//const user = userCredential.user
+		.then(async (userCredential) => {
+			const user = {...userCredential.user, phoneNumber}
+			await addUser(user)
 			sendEmailVerificationToUser()
 		})
 		.catch((error) => {
@@ -91,12 +102,9 @@ export const createUserEmailPass = async (email, password) => {
 }
 
 export const LinkUserEmailPass = async (email, password) => {
-	password = md5(password)
 	const credential = EmailAuthProvider.credential(email, password)
 	linkWithCredential(auth.currentUser, credential)
-		.then((usercred) => {
-			//const user = usercred.user
-			//console.log('Account linking success', user)
+		.then(() => {
 			sendEmailVerificationToUser()
 		}).catch((error) => {
 			console.log('Account linking error', error)
@@ -104,9 +112,41 @@ export const LinkUserEmailPass = async (email, password) => {
 }
 
 export const sendEmailVerificationToUser = () => {
-	console.log(auth.currentUser)
 	sendEmailVerification(auth.currentUser)
 		.then(() => {
 			console.log('email de verificacion enviado')
+		}).catch(console.log)
+}
+
+export const sendVerificationToSignUp = async (email ,pass, telefono) => {
+
+	var actionCodeSettings = {
+		url: `${process.env.NEXT_PUBLIC_HOST}/?emailSignUp=${email}&passSignUp=${pass}&phoneSignUp=${telefono}`,
+		handleCodeInApp: true,
+	}
+
+	sendSignInLinkToEmail(auth, email, actionCodeSettings)
+		.then(() => {
+			console.log('enviado')
+		})
+		.catch((error) => {
+			//var errorCode = error.code
+			var errorMessage = error.message
+			console.log(errorMessage)
+		})
+}
+
+export const checkEmailRegistered = (email) => {
+	return fetchSignInMethodsForEmail(auth, email)
+		.then((signInMethods) => {
+			if(signInMethods.length > 0){
+				return true
+			}else{
+				return false
+			}
+		})
+		.catch((error) => {
+			console.log(error)
+			// Some error occurred, you can inspect the code: error.code
 		})
 }

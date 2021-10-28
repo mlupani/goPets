@@ -1,4 +1,6 @@
 import type { NextPage } from 'next'
+import { useRouter } from 'next/router'
+import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from 'store/index';
 import HeadPage from 'components/HeadPage';
@@ -6,10 +8,19 @@ import Logo from 'components/Logo';
 import Spinner from 'components/Spinner';
 import GroupButtons from 'components/GroupButtons';
 import FormRegister from 'components/FormRegister';
+import { createUserEmailPass } from '../firebase/auth';
 
 const Home: NextPage = () => {
 
   const user = useSelector((state: RootState) => state.usuario)
+  const router = useRouter()
+
+  useEffect(() => {
+    const { emailSignUp, passSignUp, phoneSignUp } = router.query
+    if(emailSignUp && passSignUp && phoneSignUp) {
+      createUserEmailPass(emailSignUp, passSignUp, phoneSignUp)
+    }
+  }, [router])
 
   if(user.status === 'authenticated' && !user.register) return <></>
 
@@ -20,7 +31,7 @@ const Home: NextPage = () => {
         <div className='flex flex-col items-center h-screen w-screen mx-5'>
           <Logo/>
           {
-            user.status === 'authenticated' && user.register ?
+            user.status === 'authenticated' && user.register && user?.user?.provider !== 'password' ?
             <FormRegister/> :
             user.status === 'checking' ? <Spinner /> :
             <GroupButtons/>

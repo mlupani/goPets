@@ -1,7 +1,9 @@
-import { useState, FormEvent } from 'react';
+import { useState, FormEvent, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import { signInEmail } from '../firebase/auth';
-import Button from 'components/Button';
 import { useForm } from 'hooks/useForm'
+import Button from 'components/Button';
+import LoadingSpinner from 'components/LoadingSpinner';
 
 const FormLogin = () => {
 
@@ -9,20 +11,26 @@ const FormLogin = () => {
         email: '',
         contrasena: '',
     })
+    const dispatch = useDispatch();
     const [error, setError] = useState(false)
+    const [errorMsg, setErrorMsg] = useState(null)
+    const [loading, setLoading] = useState(false)
+
+    useEffect(() => {
+        setErrorMsg(null)
+    }, [form])
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault()
+        setLoading(true)
         if(!form.email || form.contrasena.length <= 5 || !form.email.includes('@')) {
             setError(true)
+            setLoading(false)
             return null
         }
-        signInEmail(form.email, form.contrasena)
-        /*
-        const userUpdated = {...user, password: form.contrasena, phoneNumber: form.telefono}
-        await updateUser(userUpdated)
-        dispatch(signIn(userUpdated, false))
-        */
+        const error = await signInEmail(form.email, form.contrasena)
+        setErrorMsg(error)
+        setLoading(false)
     }
 
     return (
@@ -53,7 +61,13 @@ const FormLogin = () => {
                 }
                 </div>
             </div>
-            <div className='flex justify-center items-center'>
+            <div className='flex flex-col justify-center items-center my-2 mb-2'>
+                {
+                    loading && <div className='my-4'><LoadingSpinner/></div>
+                }
+                {
+                    errorMsg && <p className="text-red-500 text-lg font-bold italic my-1 mb-4 text-center">{errorMsg}</p>
+                }
                 <Button text={'Ingresar'} disabled={!form.email || form.contrasena.length <= 5 || !form.email.includes('@') ? true : false} />
             </div>
             </form>

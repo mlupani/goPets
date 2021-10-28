@@ -4,7 +4,9 @@ import { AppDispatch } from '../../index';
 interface user {
 	avatar: string,
 	email: string,
-	provider: string
+	provider: string,
+	displayName: string,
+	id: string
 }
 
 interface userState {
@@ -12,7 +14,15 @@ interface userState {
 	token?: string | null,
 	errorMessage: string,
 	user: user | null,
-	register: boolean
+	register: boolean,
+	upload: uploadState
+}
+
+interface uploadState {
+	baseurl: string,
+	base64: string,
+	name: string,
+	type: string,
 }
 
 const stateUser = {
@@ -27,7 +37,13 @@ const initialState: userState = {
 	token: null,
 	errorMessage: '',
 	user: null,
-	register: false
+	register: false,
+	upload: {
+		baseurl: '',
+		base64: '',
+		name: '',
+		type: ''
+	},
 }
 
 export const usuarioSlice = createSlice({
@@ -57,11 +73,21 @@ export const usuarioSlice = createSlice({
 			state.errorMessage = ''
 			state.user = null
 			state.register = false
-		}
+		},
+		register: (state) => {
+			state.status = stateUser[2]
+			state.token = null
+			state.errorMessage = ''
+			state.user = null
+			state.register = true
+		},
+		uploadFile: (state, action) => {
+			state.upload = action.payload
+		},
 	}
 })
 
-export const { login, addError, logout, checking } = usuarioSlice.actions
+export const { login, addError, logout, checking, register, uploadFile } = usuarioSlice.actions
 
 export const signIn = (user: any, register: boolean) => (dispatch: AppDispatch) => {
 	if(user)
@@ -80,6 +106,14 @@ export const setChecking = () => async (dispatch: AppDispatch) => {
 
 export const handleLogout = () => (dispatch: AppDispatch) => {
 	dispatch(logout())
+}
+
+export const handleRegister = () => (dispatch: AppDispatch) => {
+	dispatch(register())
+}
+
+export const handleUploadInfo = (preview: any) => (dispatch: AppDispatch) => {
+	dispatch(uploadFile(preview))
 }
 
 export default usuarioSlice.reducer

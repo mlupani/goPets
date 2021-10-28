@@ -1,4 +1,4 @@
-import { collection, getDocs, query, where, addDoc, setDoc, doc } from 'firebase/firestore'
+import { collection, getDocs, query, where, addDoc, setDoc, doc, Timestamp } from 'firebase/firestore'
 //import { doc, onSnapshot } from 'firebase/firestore'
 import { db } from './config'
 import { mapResults } from './helpers'
@@ -29,15 +29,18 @@ export const getUserInCollection = async (user) => {
 	return res
 }
 
-export const addUser = async ({email, uid, displayName, photoURL, providerData}) => {
+export const addUser = async ({email, uid, displayName, photoURL, providerData,phoneNumber}) => {
+
+	if(phoneNumber === null && providerData[0]?.providerId === 'password') return null
+
 	const data = {
 		avatar: photoURL,
 		coords: [],
 		email: email,
 		firebaseID: uid,
 		name: displayName,
-		phoneNumber: null,
-		provider: providerData[0].providerId
+		phoneNumber: phoneNumber,
+		provider: providerData[0]?.providerId
 	}
 	const document = await addDoc(collection(db, 'users'), data)
 
@@ -51,3 +54,34 @@ export const updateUser = async (userUpdated) => {
 	const { userID, ...resto } = userUpdated
 	await setDoc(doc(db, 'users', userID), resto)
 }
+
+export const addPost = async (usuarioID, usuarioName, avatar, title, description, img) => {
+
+	const data = {
+		usuarioID,
+		usuarioName,
+		avatar,
+		title,
+		img,
+		description,
+		createdAt: Timestamp.fromDate(new Date()),
+	}
+	const document = await addDoc(collection(db, 'posts'), data)
+
+	return {
+		...data,
+		postID: document.id
+	}
+}
+
+export const getPosts = async (callback) => {
+
+	const q = query(collection(db, 'posts'))
+	const querySnapshot = await getDocs(q)
+	const { docs } = querySnapshot
+	const res = docs.map(val => mapResults(val))
+	if(callback)	callback(res)
+	else	return res
+}
+
+
