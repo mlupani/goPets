@@ -13,7 +13,7 @@ const FormRegister = () => {
     const dispatch = useDispatch()
     const { onChange, form } = useForm({
         email: user?.email || '',
-        nombre: user?.displayName || '',
+        nombre: user?.name || '',
         contrasena: '',
         confirmar_contrasena: '',
         telefono: ''
