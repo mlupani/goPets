@@ -37,7 +37,7 @@ const index = () => {
     if(!upload.baseurl) return <Spinner />
 
     return (
-        <div className='flex flex-col justify-between mb-5 relative pt-10'>
+        <div className='flex flex-col justify-between mb-5 relative pt-16'>
             <div className='flex flex-col justify-center items-center mx-5'>
                 <img className='w-full h-60 md:h-96 object-contain' src={upload.baseurl}></img>
             </div>

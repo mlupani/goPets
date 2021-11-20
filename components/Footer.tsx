@@ -1,34 +1,16 @@
-import { useRef } from 'react'
 import { useRouter } from 'next/router'
-import { useDispatch } from 'react-redux'
 import FooterButton from 'components/FooterButton'
-import { handleUploadInfo } from 'store/slices/usuarios'
-import { setupReader } from 'helpers/readerImage'
-import { compressingFiles } from 'helpers/compressor'
+import useHandleUpload from '../hooks/useHandleUpload';
+
 
 const Footer = () => {
 
-    const ref = useRef() as React.MutableRefObject<HTMLInputElement>
     const router = useRouter()
-    const dispatch = useDispatch()
-
-    const handlePublish = () => {
-        ref.current.click()
-    }
-
-    const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        if(e?.target?.files?.length) {
-            const fileObj = e.target.files[0]
-            const fileCompressed = await compressingFiles(fileObj)
-            const file = await setupReader(fileCompressed)
-            dispatch(handleUploadInfo(file))
-            router.push('/new')
-        }
-    }
+    const { ref, handleFile, handlePublish } = useHandleUpload()
 
     if(router.pathname !== '/')
         return (
-            <nav className='grid grid-cols-5 md:hidden bg-red-200 fixed w-full left-0 bottom-0 pl-0 mb-0 h-16'>
+            <nav className='grid grid-cols-5 md:hidden bg-blue-greenBlueCrayola2 fixed w-full left-0 bottom-0 pl-0 mb-0 h-16'>
                 <input type="file" className='hidden' onChange={handleFile} name="file" ref={ref} />
                 <FooterButton title={'Inicio'} icon={'dog'} page={'/home'} selected={router?.pathname === '/home' ? true : false} />
                 <FooterButton title={'Adopta'} icon={'heart'} page={'/adopta'} selected={router?.pathname === '/adopta' ? true : false} />

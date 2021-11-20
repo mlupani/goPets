@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { getPosts } from '../../firebase/client'
 import Card from 'components/Card';
 import LoadingSpinner from 'components/LoadingSpinner';
+import CircleMenu from 'components/CircleMenu';
 
 const index = () => {
 
@@ -13,6 +14,7 @@ const index = () => {
 
     return (
         <div className='container mx-auto flex flex-col justify-center items-center relative'>
+            <CircleMenu/>
             <div className='grid grid-cols-1 pb-24 gap-10 lg:pt-10 md:mx-44 lg:mx-56 xl:mx-96 mt-14 lg:mt-10'>
                 {
                     posts === undefined ? 'No hay publicaciones' : !posts?.length ? <div className='h-screen flex justify-center items-center'><LoadingSpinner/></div> : null
